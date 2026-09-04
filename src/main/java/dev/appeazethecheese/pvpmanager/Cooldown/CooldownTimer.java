@@ -2,16 +2,15 @@ package dev.appeazethecheese.pvpmanager.Cooldown;
 
 import dev.appeazethecheese.pvpmanager.Main;
 
-import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
+import org.bukkit.scheduler.BukkitTask;
 
 public class CooldownTimer {
     private boolean started = false;
     private int secondsElapsed = 0;
     private final int totalSeconds;
     private final TimerTask timerTask;
-    private Timer internalTimer;
+    private BukkitTask internalTask;
 
     public CooldownTimer(TimerTask task, int seconds){
         this.timerTask = task;
@@ -19,29 +18,30 @@ public class CooldownTimer {
     }
 
     public void start() {
-        internalTimer = new Timer();
         schedule(timerTask);
     }
 
     public void stop() {
-        internalTimer.cancel();
+        if (internalTask != null) internalTask.cancel();
+        internalTask = null;
         this.started = false;
     }
 
     private void schedule(TimerTask task) {
-        internalTimer.schedule(new TimerTask() {
+        internalTask = Main.Instance.getServer().getScheduler().runTaskTimer(Main.Instance, new Runnable() {
             @Override
             public void run() {
                 secondsElapsed++;
 
                 if(secondsElapsed >= totalSeconds){
                     started = false;
-                    internalTimer.cancel();
+                    if (internalTask != null) internalTask.cancel();
+                    internalTask = null;
                     if(task != null)
                         task.run();
                 }
             }
-        }, 0, 1000L);
+        }, 0L, 20L);
         started = true;
     }
 

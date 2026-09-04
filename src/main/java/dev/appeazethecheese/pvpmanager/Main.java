@@ -6,6 +6,7 @@ import dev.appeazethecheese.pvpmanager.Data.PlayerDataManager;
 import dev.appeazethecheese.pvpmanager.States.PvpStateManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -31,7 +32,10 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EventListener(), this);
 
         saveDefaultConfig();
-        saveResource("playerdata.yml", false);
+        File playerData = new File(getDataFolder(), "playerdata.yml");
+        if (!playerData.exists()) {
+            saveResource("playerdata.yml", false);
+        }
 
         PlayerDataManager.loadConfig();
         PvpStateManager.createStatesForOnlinePlayers();

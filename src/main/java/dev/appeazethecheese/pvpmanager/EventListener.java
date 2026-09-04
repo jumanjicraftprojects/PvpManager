@@ -50,7 +50,7 @@ public class EventListener implements Listener {
 
         Player target = (Player) event.getEntity();
 
-        if (attacker.getUniqueId() == target.getUniqueId()) {
+        if (attacker.getUniqueId().equals(target.getUniqueId())) {
             // Player damaging themselves
             return;
         }
@@ -74,12 +74,15 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPotionSplash(PotionSplashEvent event){
         if(!(event.getPotion().getShooter() instanceof Player)) return;
-        if(event.getPotion().getEffects().stream().noneMatch(x -> x.getType().getName().equals(PotionEffectType.POISON.getName()))) return;
+        if(event.getPotion().getEffects().stream().noneMatch(x ->
+                x.getType().equals(PotionEffectType.POISON)
+                        || x.getType().equals(PotionEffectType.WITHER)
+                        || x.getType().equals(PotionEffectType.INSTANT_DAMAGE))) return;
 
         Player attacker = (Player) event.getPotion().getShooter();
         PvpState attackerState = PvpStateManager.getOrCreateState(attacker);
         for(LivingEntity e : event.getAffectedEntities().stream().filter(x -> x instanceof Player).collect(Collectors.toList())){
-            if(e.getUniqueId() == attacker.getUniqueId())
+            if(e.getUniqueId().equals(attacker.getUniqueId()))
                 continue;
 
             Player target = (Player)e;

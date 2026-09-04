@@ -37,6 +37,14 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
         }
 
         var targetPlayer = target.get();
+        if (targetPlayer.equals(player)) {
+            sender.sendMessage(ChatColor.RED + "You cannot duel yourself.");
+            return true;
+        }
+        if (!player.getWorld().equals(targetPlayer.getWorld())) {
+            sender.sendMessage(ChatColor.RED + "That player is in another world.");
+            return true;
+        }
         var distance = player.getLocation().distance(targetPlayer.getLocation());
 
         if(distance > 10){
@@ -44,8 +52,7 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        sender.sendMessage(ChatColor.GREEN + "Duel started.");
-        targetPlayer.sendMessage(ChatColor.GREEN + "Duel started.");
+        sender.sendMessage(ChatColor.YELLOW + "Duels are not enabled yet. Use /pvp on for ordinary PvP.");
 
         return true;
     }
